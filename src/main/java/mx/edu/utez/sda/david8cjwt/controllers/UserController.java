@@ -39,7 +39,7 @@ public class UserController {
             Authentication authentication=authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             authRequest.getUsername(),
-                            passwordEncoder.encode(authRequest.getPassword()))
+                           authRequest.getPassword())
             );
             if(authentication.isAuthenticated()){
                 String token = jwtService.generateToken(authRequest.getUsername());
