@@ -33,6 +33,25 @@ public class UserController {
     public ResponseEntity<CustomResponse<String>> register(@RequestBody UserInfo userInfo){
        return new ResponseEntity<>(userInfoService.guardarUser(userInfo), HttpStatus.OK);
     }
+    @PostMapping("/login")
+    private ResponseEntity<CustomResponse<String>> login(@RequestBody AuthRequest authRequest){
+        try {
+            Authentication authentication=authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authRequest.getUsername(),
+                            passwordEncoder.encode(authRequest.getPassword()))
+            );
+            if(authentication.isAuthenticated()){
+                String token = jwtService.generateToken(authRequest.getUsername());
+                return new ResponseEntity<>(new CustomResponse<>(token,false,200,"ok"),HttpStatus.OK);
+            }else {
+                System.out.println("No autenticado");
+                throw new UsernameNotFoundException("Usuario invalido");
+            }
+        }catch (Exception e){
+            throw new UsernameNotFoundException("Usuario invalido");
+        }
+    }
     @GetMapping("/index")
     public String index(){
         return "index";
@@ -48,21 +67,5 @@ public class UserController {
         return "Este endpoint es para usuarios y admin";
     }
 
-    @PostMapping("/login")
-    private ResponseEntity<CustomResponse<String>> login(@RequestBody AuthRequest authRequest){
-        try {
-            Authentication authentication=authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            authRequest.getUsername(),
-                            authRequest.getPassword())
-            );
-            if(authentication.isAuthenticated()){
-                String token = jwtService.generateToken(authRequest.getUsername());
-                return new ResponseEntity<>(new CustomResponse<>(token,false,200,"ok"),HttpStatus.OK);
-            }else {}
-        }catch (Exception e){
-            throw new UsernameNotFoundException("Usuario invalido");
-        }
-        return new ResponseEntity<>(new CustomResponse<>(null,true,403,"Usuario invalido"),HttpStatus.FORBIDDEN);
-    }
+
 }

@@ -22,6 +22,7 @@ public class UserInfo  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Column(name = "username",unique = true)
     private String username;
     private String password;
     private String roles;

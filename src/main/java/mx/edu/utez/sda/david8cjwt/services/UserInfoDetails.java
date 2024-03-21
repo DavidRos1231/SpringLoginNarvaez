@@ -19,30 +19,35 @@ import java.util.stream.Collectors;
 @Setter
 @Getter
 public class UserInfoDetails implements UserDetails {
-
-    private String username;
+    private String name;
     private String password;
     private boolean nonLocked;
     private List<GrantedAuthority> authorities;
 
     public UserInfoDetails(UserInfo userInfo){
-        username=userInfo.getUsername();
+        name=userInfo.getUsername();
         password=userInfo.getPassword();
         nonLocked=userInfo.isNonLocked();
         authorities = Arrays.stream(userInfo.getRoles().split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());    }
+
+    @Override
+    public String getUsername() {
+        return name;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return nonLocked;
     }
 
     @Override

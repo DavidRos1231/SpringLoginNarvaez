@@ -60,7 +60,8 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean AuthenticationProvider authenticationProvider(){
+    @Bean
+    public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider authenticationProvider= new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(
                 userDetailService()

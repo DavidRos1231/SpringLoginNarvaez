@@ -1,5 +1,6 @@
 package mx.edu.utez.sda.david8cjwt.services;
 
+import mx.edu.utez.sda.david8cjwt.config.SecurityConfig;
 import mx.edu.utez.sda.david8cjwt.entities.UserInfo;
 import mx.edu.utez.sda.david8cjwt.repositories.UserInfoRepository;
 import mx.edu.utez.sda.david8cjwt.utils.CustomResponse;
@@ -19,18 +20,20 @@ public class UserInfoService implements UserDetailsService {
     private UserInfoRepository userInfoRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<UserInfo> userDetail = userInfoRepository.getUserInfoByUsername(username);
         return userDetail.map(UserInfoDetails::new)
                 .orElseThrow(
-                        ()-> new UsernameNotFoundException("usuario no encontrado")
+                        ()-> new UsernameNotFoundException("usuario no encontrado: "+ username)
                 );
     }
 
     public CustomResponse<String> guardarUser(UserInfo userInfo){
         userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
         userInfo.setNonLocked(true);
+        userInfo.setRoles("ROLE_USER");
         userInfoRepository.save(userInfo);
         return new CustomResponse<>(
                 "Usuario creado correctamente",false,200,"ok"
